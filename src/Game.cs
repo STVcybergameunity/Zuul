@@ -1,15 +1,17 @@
 using System;
+using Microsoft.VisualBasic;
 
 class Game
 {
 	// Private fields
 	private Parser parser;
-	private Room currentRoom;
+	private Player player;
 
 	// Constructor
 	public Game()
 	{
 		parser = new Parser();
+		player = new Player();
 		CreateRooms();
 	}
 
@@ -22,8 +24,9 @@ class Game
 		Room pub = new Room("in the campus pub");
 		Room lab = new Room("in a computing lab");
 		Room office = new Room("in the computing admin office");
-		Room kitchen = new Room("in the kitchen");
-		Room cellar = new Room("in the cellar");
+		Room kitchen = new Room("in the pub's kitchen");
+		Room cellar = new Room("in the pub's cellar");
+		Room backyard = new Room("in the backyard");
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -31,6 +34,7 @@ class Game
 		outside.AddExit("west", pub);
 
 		theatre.AddExit("west", outside);
+		theatre.AddExit("south", backyard);
 
 		pub.AddExit("east", outside);
 		pub.AddExit("south", kitchen);
@@ -40,10 +44,14 @@ class Game
 
 		office.AddExit("west", lab);
 
-		kitchen.AddExit("south", cellar);
+		kitchen.AddExit("down", cellar);
 		kitchen.AddExit("north", pub);
+		kitchen.AddExit("east", backyard);
 
-		cellar.AddExit("north", kitchen);
+		cellar.AddExit("up", kitchen);
+		
+		backyard.AddExit("west", kitchen);
+		backyard.AddExit("north", theatre);
 
 		// Create your Items here
 		// ...
@@ -51,7 +59,7 @@ class Game
 		// ...
 
 		// Start game outside
-		currentRoom = outside;
+		player.CurrentRoom = outside;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -80,7 +88,7 @@ class Game
 		Console.WriteLine("Zuul is a new, incredibly boring adventure game.");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
-		Console.WriteLine(currentRoom.GetLongDescription());
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 
 	// Given a command, process (that is: execute) the command.
@@ -107,6 +115,12 @@ class Game
 			case "quit":
 				wantToQuit = true;
 				break;
+			case "look":
+				Look();
+				break;
+			case "health":
+				PrintHealth();
+				break;
 		}
 
 		return wantToQuit;
@@ -118,6 +132,12 @@ class Game
 	
 	// Print out some help information.
 	// Here we print the mission and a list of the command words.
+	
+	public void Look()
+	{
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+	}
+
 	private void PrintHelp()
 	{
 		Console.WriteLine("You are lost. You are alone.");
@@ -141,14 +161,14 @@ class Game
 		string direction = command.SecondWord;
 
 		// Try to go to the next room.
-		Room nextRoom = currentRoom.GetExit(direction);
+		Room nextRoom = player.CurrentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
-			Console.WriteLine($"There is no door to "+direction+"!");
+			Console.WriteLine($"There is no door to {direction}!");
 			return;
 		}
 
-		currentRoom = nextRoom;
-		Console.WriteLine(currentRoom.GetLongDescription());
+		player.CurrentRoom = nextRoom;
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 }
