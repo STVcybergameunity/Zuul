@@ -74,11 +74,18 @@ class Game
 		{
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
+					//checks if health is <=0 then stops
+			if (player.health == 0)
+			{
+				Console.WriteLine("Game Over");
+				finished = true;
+			}
 		}
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
-	}
+    }	
+	
 
 	// Print out the opening message for the player.
 	private void PrintWelcome()
@@ -111,6 +118,7 @@ class Game
 				break;
 			case "go":
 				GoRoom(command);
+				player.health -=100;
 				break;
 			case "quit":
 				wantToQuit = true;
@@ -119,7 +127,7 @@ class Game
 				Look();
 				break;
 			case "health":
-				PrintHealth();
+				SeeHealth();
 				break;
 		}
 
@@ -137,6 +145,11 @@ class Game
 	{
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
+
+	    public void SeeHealth()
+    {
+        Console.WriteLine(player.health);
+    }
 
 	private void PrintHelp()
 	{
