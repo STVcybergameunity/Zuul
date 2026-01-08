@@ -53,10 +53,11 @@ class Game
 		backyard.AddExit("west", kitchen);
 		backyard.AddExit("north", theatre);
 
-		// Create your Items here
-		// ...
+        // Create your Items here
+        Item bandage = new Item(10, "A bandage");
+		Item medkit = new Item(40, "A medkit");
 		// And add them to the Rooms
-		// ...
+		
 
 		// Start game outside
 		player.CurrentRoom = outside;
