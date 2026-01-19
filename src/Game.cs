@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
 
 class Game
@@ -59,8 +60,12 @@ class Game
 		// Makes a item find more in Item.cs
         Item bandage = new Item(10, "Bandage");
 		Item medkit = new Item(40, "Medkit");
+		Item key = new Item(5, "key");
 
 		// And add them to the Rooms
+		outside.Chest.Put("Bandage",bandage);
+		outside.Chest.Put("Medkit", medkit);
+		outside.Chest.Put("Key", key);
 
 		// Start game outside
 		player.CurrentRoom = outside;
@@ -137,10 +142,17 @@ class Game
 				SeeHealth();
 				break;
 			case "heal":
-				player.Heal();
+				player.Heal(Int32.Parse(command.SecondWord));
 				break;
 			case "die":
 				player.Sepuccu();
+				break;
+			case "take":
+				player.TakeFromChest(command.SecondWord);
+				break;
+			case "check":
+				checkInventory(command.SecondWord);
+				checkWeight(command.SecondWord);
 				break;
 		}
 
@@ -154,9 +166,40 @@ class Game
 	// Print out some help information.
 	// Here we print the mission and a list of the command words.
 	
+	//See what is in the room and where you are
 	private void Look()
 	{
+		if (player.CurrentRoom.Chest != null)
+        {
+			foreach ( var (_, item) in player.CurrentRoom.Chest.getItems())
+			{
+				Console.WriteLine("You found :");
+				Console.Write(item.Description);
+				Console.Write(" - ");
+				Console.WriteLine(item.Weight);
+				Console.WriteLine($"Type take {item.Description} to grab the item.");
+			}
+		}
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+	}
+
+	//See what you have in your inventory
+	private void checkInventory(string items)
+	{
+		foreach( var (_, item) in player.getBackpack().getItems())
+		{
+			Console.Write(item.Description);
+			Console.Write(" - ");
+			Console.WriteLine(item.Weight);
+		}
+	}
+
+	private void checkWeight(string weight)
+	{
+		Console.Write("Total used weight is: ");
+		Console.WriteLine(player.getBackpack().TotalWeight());
+		Console.Write("U have: ");
+		Console.WriteLine($"{player.getBackpack().FreeWeight()} left");
 	}
 
 	// Shows the players HP
