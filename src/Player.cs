@@ -18,9 +18,27 @@ class Player
     }
     // Methods
 
+    public Inventory getBackpack()
+    {
+        return backpack;
+    }
+
     // Allows u to take a item from a room
     public bool TakeFromChest(string itemName)
     {
+        if (CurrentRoom.Chest != null)
+        {
+            // Remove itemName from chest and save it
+            Item item = CurrentRoom.Chest.Get(itemName);
+
+            // Add the item we took to the backpack
+            backpack.Put(itemName, item);
+
+            // Return true
+            return true;
+        }
+
+        // If empty return false
         return false;
     }
 
@@ -33,11 +51,11 @@ class Player
 
     // Heals the player but only if u can heal 20 hp or more
     // Else print feedback
-    public void Heal()
+    public void Heal(int hptot)
 	{
-		if (health <= 80)
+		if (health <= 100-hptot)
 		{
-			health += 20;
+			health += hptot;
 			Console.WriteLine($"You healed! Your health is now: {health}HP");
 		}
 		else
