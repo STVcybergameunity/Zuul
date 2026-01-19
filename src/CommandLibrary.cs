@@ -12,9 +12,11 @@ class CommandLibrary
 
 		validCommands.Add("help");
 		validCommands.Add("go");
-		validCommands.Add("quit");
 		validCommands.Add("look");
 		validCommands.Add("health");
+		validCommands.Add("heal");
+		validCommands.Add("die");
+		validCommands.Add("quit");
 	}
 
 	// Check whether a given string is a valid command word.
