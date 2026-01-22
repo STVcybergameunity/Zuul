@@ -7,6 +7,7 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
+	private Room winRoom;
 
     // Constructor
 	// Makes the player object, parser object and room objects
@@ -25,7 +26,7 @@ class Game
 		Room theatre = new Room("in a lecture theatre");
 		Room pub = new Room("in the campus pub");
 		Room lab = new Room("in a computing lab");
-		Room office = new Room("in the computing a{dmin office");
+		Room office = new Room("in the admin office");
 		Room kitchen = new Room("in the pub's kitchen");
 		Room cellar = new Room("in the pub's cellar");
 		Room backyard = new Room("in the backyard");
@@ -56,22 +57,27 @@ class Game
 		backyard.AddExit("north", theatre);
 
         // Create your Items here
-
 		// Makes a item find more in Item.cs
-        Item bandage = new Item(10, "Bandage");
-		Item medkit = new Item(40, "Medkit");
+        Item bandage = new Item(10, "bandage");
+		Item medkit = new Item(40, "medkit");
 		Item key = new Item(5, "key");
+		Item metal = new Item(60, "metal");
 
 		// And add them to the Rooms
-		outside.Chest.Put("Bandage",bandage);
-		outside.Chest.Put("Medkit", medkit);
-		outside.Chest.Put("Key", key);
+		outside.Chest.Put("bandage",bandage);
+		outside.Chest.Put("medkit", medkit);
+		outside.Chest.Put("key", key);
+		outside.Chest.Put("metal", metal);
+
 
 		// Start game outside
 		player.CurrentRoom = outside;
+
+		winRoom = cellar;
 	}
 
 	//  Main play routine. Loops until end of play.
+
 	public void Play()
 	{
 		PrintWelcome();
@@ -87,10 +93,15 @@ class Game
 			//checks if health is == 0 then stops
 			if (player.health == 0)
 			{
-				Console.WriteLine("Game Over");
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Game Over\n");
 				finished = true;
 			}
+
+
+
 		}
+		Console.ForegroundColor = ConsoleColor.White;
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
@@ -118,7 +129,7 @@ class Game
 
 		if(command.IsUnknown())
 		{
-			Console.WriteLine("I don't know what you mean...");
+			Console.WriteLine("I don't know what you mean...\nSee -help- for more info.");
 			return wantToQuit; // false
 		}
 
@@ -142,18 +153,28 @@ class Game
 				SeeHealth();
 				break;
 			case "heal":
-				player.Heal(Int32.Parse(command.SecondWord));
+				player.Heal(command.SecondWord);
 				break;
 			case "die":
 				player.Sepuccu();
 				break;
 			case "take":
-				player.TakeFromChest(command.SecondWord);
+				TakeFromChest(command.SecondWord);
 				break;
-			case "check":
+			case "place":
+				PutInChest(command.SecondWord);
+				break;
+			case "backpack":
 				checkInventory(command.SecondWord);
 				checkWeight(command.SecondWord);
 				break;
+		}
+
+		if (player.CurrentRoom == winRoom)
+		{
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine("\nYou Won\n");
+			wantToQuit = true;
 		}
 
 		return wantToQuit;
@@ -177,11 +198,27 @@ class Game
 				Console.Write(item.Description);
 				Console.Write(" - ");
 				Console.WriteLine(item.Weight);
-				Console.WriteLine($"Type take {item.Description} to grab the item.");
+				Console.WriteLine($"Type take {item.Description} to grab the item.\n");
 			}
 		}
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
+
+	// Shows the commands again
+	private void PrintHelp()
+	{
+		Console.WriteLine("You are lost. You are alone.");
+		Console.WriteLine("You wander around at the university.");
+		Console.WriteLine();
+		// let the parser print the commands
+		parser.PrintValidCommands();
+	}
+
+	// Shows the players HP
+	private void SeeHealth()
+    {
+        Console.WriteLine($"Your health is: {player.health}HP");
+    }
 
 	//See what you have in your inventory
 	private void checkInventory(string items)
@@ -194,18 +231,51 @@ class Game
 		}
 	}
 
+	// Allows the player to see how much they are carrying and the space left
 	private void checkWeight(string weight)
 	{
 		Console.Write("Total used weight is: ");
 		Console.WriteLine(player.getBackpack().TotalWeight());
 		Console.Write("U have: ");
-		Console.WriteLine($"{player.getBackpack().FreeWeight()} left");
+		Console.WriteLine($"{player.getBackpack().FreeWeight()} weight left\n");
 	}
 
-	// Shows the players HP
-	private void SeeHealth()
+	// Allows you to add items to a room
+	private bool PutInChest(string itemName)
     {
-        Console.WriteLine($"Your health is: {player.health}HP");
+        if (player.getBackpack() != null)
+        {
+            // Remove itemName from backpack and save it
+            Item item = player.Place(itemName);
+
+            // Add the item we took to the inventory
+            player.CurrentRoom.Chest.Put(itemName, item);
+
+            // Return true
+            return true;
+        }
+
+        // If empty return false
+        return false;
+    }
+
+	    // Allows u to take a item from a room
+    private bool TakeFromChest(string itemName)
+    {
+        if (player.CurrentRoom.Chest != null)
+        {
+            // Remove itemName from chest and save it
+            Item item = player.CurrentRoom.Chest.Get(itemName);
+
+            // Add the item we took to the backpack
+            player.getBackpack().Put(itemName, item);
+
+            // Return true
+            return true;
+        }
+
+        // If empty return false
+        return false;
     }
 
 	// If the player is low show a message
@@ -220,16 +290,6 @@ class Game
 		{
 			Console.WriteLine($"U feel miserable. U should heal!");
 		}
-	}
-
-	// Shows the commands again
-	private void PrintHelp()
-	{
-		Console.WriteLine("You are lost. You are alone.");
-		Console.WriteLine("You wander around at the university.");
-		Console.WriteLine();
-		// let the parser print the commands
-		parser.PrintValidCommands();
 	}
 
 	// Try to go to one direction. If there is an exit, enter the new
@@ -249,7 +309,7 @@ class Game
 		Room nextRoom = player.CurrentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
-			Console.WriteLine($"There is no door to {direction}!");
+			Console.WriteLine($"There is no door to {direction}!\nSee -help- for more info.");
 			return;
 		}
 
