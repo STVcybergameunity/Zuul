@@ -1,75 +1,72 @@
-using System.Collections.Generic;
+using System.Collections;
 
-class Room
+class Inventory
 {
-	// Private fields
+    //fields
+    private int maxWeight;
+    private Dictionary<string, Item> items;
 
-	private Inventory chest;
-	private string description;
-	private Dictionary<string, Room> exits; // stores exits of this room.
+    //constructor
+    public Inventory(int maxWeight)
+    {
+        this.maxWeight = maxWeight;
+        this.items = new Dictionary<string, Item>();
+    }
 
-	// Create a room described "description". Initially, it has no exits.
-	// "description" is something like "in a kitchen" or "in a court yard".
-	public Inventory Chest
-	{
-		get { return chest; }
-	}
-	public Room(string desc)
-	{
-		description = desc;
-		exits = new Dictionary<string, Room>();
-		chest = new Inventory(10000);
-	}
+    public Dictionary<string, Item> getItems()
+    {
+        return items;
+    }
 
-	// Define an exit for this room.
-	public void AddExit(string direction, Room neighbor)
-	{
-		exits.Add(direction, neighbor);
-	}
+    //methods
+
+    // allows a item to be placed in a room
+    public bool Put(string _, Item item)
+    {
+        if(item.Weight <= FreeWeight())
+        {
+            items.Add(item.Description, item);
+            return true;
+        }
+        Console.WriteLine($"U can't carry anymore\nWeight left {FreeWeight()} the item weights is {item.Weight}");
+        return false;
+    }
+
+    public Item Get(string itemName)
+    {
+        // Temp item creation
+        Item temp = null;
+
+        if(items.ContainsKey(itemName))
+        {
+            // If item extists
+            // Put it in the temp
+            temp = items[itemName];
+
+            // Remove item from inventory
+            items.Remove(itemName);
+        }
+
+        // Return item
+        return temp;
+    }
 
 
-	// public void AddItem(string description, Item heft)
-	// {
-	// 	Item.Add(description, heft);
-	// }
+    public int TotalWeight()
+    {
+        int total = 0;
 
-	// Return the description of the room.
-	public string GetShortDescription()
-	{
-		return description;
-	}
+        foreach(var (key, item) in items)
+        {
+            total += item.Weight;
+        }
 
-	// Return a long description of this room, in the form:
-	//     You are in the kitchen.edkit = new Item(40, "Medkit");
-		// And add them to the Rooms
-	//     Exits: north, west
-	public string GetLongDescription()
-	{
-		string str = "You are ";
-		str += description;
-		str += ".\n";
-		str += GetExitString();
-		return str;
-	}
-
-	// Return the room that is reached if we go from this room in direction
-	// "direction". If there is no room in that direction, return null.
-	public Room GetExit(string direction)
-	{
-		if (exits.ContainsKey(direction))
-		{
-			return exits[direction];
-		}
-		return null;
-	}
-
-	// Return a string describing the room's exits, for example
-	// "Exits: north, west".
-	private string GetExitString()
-	{
-		string str = "Exits: ";
-		str += String.Join(", ", exits.Keys);
-
-		return str;
-	}
+        return total;
+    }
+    
+    public int FreeWeight()
+    {
+       int  freeWeight = maxWeight - TotalWeight();
+       return freeWeight;
+    }
 }
