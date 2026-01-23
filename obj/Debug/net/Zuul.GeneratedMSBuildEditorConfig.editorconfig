@@ -1,0 +1,8 @@
+is_global = true
+build_property.RootNamespace = Zuul
+build_property.ProjectDir = /home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.CsWinRTUseWindowsUIXamlProjections = false
+build_property.EffectiveAnalysisLevelStyle = 
+build_property.EnableCodeStyleSeverity = 

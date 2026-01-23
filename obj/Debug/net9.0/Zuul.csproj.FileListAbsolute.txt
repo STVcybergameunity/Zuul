@@ -1,0 +1,14 @@
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/bin/Debug/net9.0/Zuul
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/bin/Debug/net9.0/Zuul.deps.json
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/bin/Debug/net9.0/Zuul.runtimeconfig.json
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/bin/Debug/net9.0/Zuul.dll
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/bin/Debug/net9.0/Zuul.pdb
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.GeneratedMSBuildEditorConfig.editorconfig
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.AssemblyInfoInputs.cache
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.AssemblyInfo.cs
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.csproj.CoreCompileInputs.cache
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.dll
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/refint/Zuul.dll
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.pdb
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/Zuul.genruntimeconfig.cache
+/home/stefan/Schoolwerk/module_4/zuul/Zuul/Zuul/obj/Debug/net9.0/ref/Zuul.dll
