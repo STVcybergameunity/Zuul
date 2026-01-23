@@ -9,6 +9,7 @@ class Game
 	private Player player;
 	private Room winRoom;
 
+
     // Constructor
 	// Makes the player object, parser object and room objects
     public Game()
@@ -17,7 +18,6 @@ class Game
 		player = new Player();
 		CreateRooms();
 	}
-	//hi
 
 	// Initialise the Rooms (and the Items)
 	private void CreateRooms()
