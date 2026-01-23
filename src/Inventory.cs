@@ -51,6 +51,20 @@ class Inventory
         return temp;
     }
 
+    public Item peek(string itemName)
+    {
+        // Temp item creation
+        Item temp = null;
+
+        if(items.ContainsKey(itemName))
+        {
+            // If item extists
+            // Put it in the temp
+            temp = items[itemName];
+        }
+        return temp;
+    }
+
 
     public int TotalWeight()
     {
