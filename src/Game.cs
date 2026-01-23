@@ -22,58 +22,57 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room outside = new Room("outside the main entrance of the university");
-		Room theatre = new Room("in a lecture theatre");
-		Room pub = new Room("in the campus pub");
-		Room lab = new Room("in a computing lab");
-		Room office = new Room("in the admin office");
-		Room kitchen = new Room("in the pub's kitchen");
-		Room cellar = new Room("in the pub's cellar");
-		Room backyard = new Room("in the backyard");
+		Room carrion = new Room("in a fleshy place");
+		Room narrow = new Room("in a hallway filled with flesh, it's so narrow where does it lead");
+		Room corpse = new Room("in a open area, there is a corpse here. It smells");
+		Room nurgle = new Room("in a room with a horrible smell. There is something here, it's green and slimey..");
+		Room silence = new Room("in a room that is completely silent, this is unusual....");
+		Room bile = new Room("in a pool of bile, u feel your skin crawl");
+		Room rash = new Room("in a room filled with rashes, I feel like i'm gonna vomit");
+		Room teeth = new Room("in a room filled with teeth, it makes me uneasy");
 
 		// Initialise room exits
-		outside.AddExit("east", theatre);
-		outside.AddExit("south", lab);
-		outside.AddExit("west", pub);
+		carrion.AddExit("east", narrow);
+		carrion.AddExit("south", nurgle);
+		carrion.AddExit("west", corpse);
 
-		theatre.AddExit("west", outside);
-		theatre.AddExit("south", backyard);
+		narrow.AddExit("west", carrion);
+		narrow.AddExit("up", teeth);
 
-		pub.AddExit("east", outside);
-		pub.AddExit("south", kitchen);
+		corpse.AddExit("east", carrion);
+		corpse.AddExit("south", bile);
 
-		lab.AddExit("north", outside);
-		lab.AddExit("east", office);
+		nurgle.AddExit("north", carrion);
+		nurgle.AddExit("east", silence);
 
-		office.AddExit("west", lab);
+		silence.AddExit("west", nurgle);
 
-		kitchen.AddExit("down", cellar);
-		kitchen.AddExit("north", pub);
-		kitchen.AddExit("east", backyard);
+		bile.AddExit("down", rash);
+		bile.AddExit("north", corpse);
+		bile.AddExit("east", narrow);
 
-		cellar.AddExit("up", kitchen);
+		rash.AddExit("up", bile);
 		
-		backyard.AddExit("west", kitchen);
-		backyard.AddExit("north", theatre);
+		teeth.AddExit("down", narrow);
 
         // Create your Items here
 		// Makes a item find more in Item.cs
         Item bandage = new Item(10, "bandage");
 		Item medkit = new Item(40, "medkit");
 		Item key = new Item(5, "key");
-		Item metal = new Item(60, "metal");
+		Item nurgling = new Item(1000, "nurgling");
 
 		// And add them to the Rooms
-		outside.Chest.Put("bandage",bandage);
-		outside.Chest.Put("medkit", medkit);
-		outside.Chest.Put("key", key);
-		outside.Chest.Put("metal", metal);
+		carrion.Chest.Put("bandage",bandage);
+		corpse.Chest.Put("medkit", medkit);
+		bile.Chest.Put("key", key);
+		nurgle.Chest.Put("nurgling", nurgling);
 
 
-		// Start game outside
-		player.CurrentRoom = outside;
+		// Start game carrion
+		player.CurrentRoom = carrion;
 
-		winRoom = cellar;
+		winRoom = teeth;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -141,7 +140,7 @@ class Game
 			case "go":
 				GoRoom(command);
 				player.Damage();
-				LowHp();
+				player.LowHp();
 				break;
 			case "quit":
 				wantToQuit = true;
@@ -150,7 +149,7 @@ class Game
 				Look();
 				break;
 			case "health":
-				SeeHealth();
+				player.SeeHealth();
 				break;
 			case "heal":
 				player.Heal(command.SecondWord);
@@ -167,6 +166,9 @@ class Game
 			case "backpack":
 				checkInventory(command.SecondWord);
 				checkWeight(command.SecondWord);
+				break;
+			case "use":
+				player.use(command);
 				break;
 		}
 
@@ -213,12 +215,6 @@ class Game
 		// let the parser print the commands
 		parser.PrintValidCommands();
 	}
-
-	// Shows the players HP
-	private void SeeHealth()
-    {
-        Console.WriteLine($"Your health is: {player.health}HP");
-    }
 
 	//See what you have in your inventory
 	private void checkInventory(string items)
@@ -277,20 +273,6 @@ class Game
         // If empty return false
         return false;
     }
-
-	// If the player is low show a message
-	// If you are very low show a diffrent message
-	private void LowHp()
-	{
-		if (player.health <= 40 && player.health >= 30)
-		{
-			Console.WriteLine($"U feel hurt.");
-		}
-		else if(player.health <= 20)
-		{
-			Console.WriteLine($"U feel miserable. U should heal!");
-		}
-	}
 
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
