@@ -5,7 +5,8 @@ class Player
     //fields
     private Inventory backpack;
     public int health;
-        // auto property
+    // auto property
+    private List<string> craftItem = new List<string>();
     public Room CurrentRoom { get; set; }
     // constructor
 
@@ -24,20 +25,20 @@ class Player
 
     public Item Place(string itemName)
     {
-        // Een tijdelijke item object
+        // A temp item object
         Item temp = null;
 
         if(backpack.getItems().ContainsKey(itemName))
         {
-            // Item bestaat in dictionary
-            // Eerst veilig stellen in temp
+            // Item exists in Inventory?
+            // Secure item
             temp = backpack.getItems()[itemName];
 
-            // Uit dictionary van huidige Inventory halen
+            // Remove from dictionary
             backpack.getItems().Remove(itemName);
         }
 
-        // Veiliggestelde item teruggeven.
+        // Return saved item
         return temp;
     }
 
@@ -71,6 +72,27 @@ class Player
         }
 	}
 
+    public void damageNum(string hptotstr)
+	{
+        if (hptotstr != null)
+        {
+            int hptot=Int32.Parse(hptotstr);
+            if (health >= hptot)
+            {
+                health -= hptot;
+                Console.WriteLine($"You took {hptot} damage! Your health is now: {health}HP");
+            }
+            else
+            {
+                Console.WriteLine("That would kill u.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Please add a valid number...");
+        }
+	}
+
     // If the player is low show a message
 	// If you are very low show a diffrent message
 	public void LowHp()
@@ -88,8 +110,17 @@ class Player
     // Shows the players HP
 	public void SeeHealth()
     {
-        Console.WriteLine($"Your health is: {health}HP");
+        Console.WriteLine($"Your health is: {health}HP\n");
     }
+    
+    // Allows the player to see how much they are carrying and the space left
+	public void checkWeight(string weight)
+	{
+		Console.Write("Total used weight is: ");
+		Console.WriteLine(getBackpack().TotalWeight());
+		Console.Write("U have: ");
+		Console.WriteLine($"{getBackpack().FreeWeight()} weight left\n");
+	}
 
     // Kill urself usefull to test on death triggers
     public void Sepuccu()
@@ -97,26 +128,103 @@ class Player
 		health = 0;
 	}
 
+    	    // Allows u to take a item from a room
+    public bool TakeFromChest(string itemName)
+    {
+		Item testtemp = CurrentRoom.Chest.Peek(itemName);
+        if (testtemp != null)
+        {
+            // Remove itemName from chest and save it
+            Item item = CurrentRoom.Chest.Get(itemName);
+
+            // Add the item we took to the backpack
+            getBackpack().Put(itemName, item);
+
+            // Return true
+            return true;
+        }
+
+        // If empty return false
+        return false;
+    }
+
+    	// Allows you to add items to a room
+	public bool PutInChest(string itemName)
+    {
+        if (getBackpack() != null)
+        {
+            // Remove itemName from backpack and save it
+            Item item = Place(itemName);
+
+            // Add the item we took to the inventory
+            CurrentRoom.Chest.Put(itemName, item);
+
+            // Return true
+            return true;
+        }
+
+        // If empty return false
+        return false;
+    }
+
 
     // Uses a item
     public void use(Command command)
     {
         if(!command.HasSecondWord())
         {
-            Console.WriteLine("What do u want to use.");
+            Console.WriteLine("What do u want to use.\n");
         }
 
         string itemName = command.SecondWord;
-        Item item = backpack.peek(itemName);
+        Item item = backpack.Peek(itemName);
+        backpack.Get(itemName);
         if (item == null)
         {
-            Console.WriteLine("U don't have that as a item.");
+            Console.WriteLine("U don't have that as a item.\n");
+            return;
         }
-        backpack.Get(itemName);
         
+        // Checks what item it is then uses it
         if (itemName == "bandage")
         {
-            Console.WriteLine();
+            if (health <= 100-20)
+            {
+                health += 20;
+                Console.WriteLine("U used the bandage +20HP");
+                Console.WriteLine($"You healed! Your health is now: {health}HP\n");
+            }
+            else
+            {
+                Console.WriteLine("You aren't all that injured are you? \n");
+            }
+            Console.WriteLine(CurrentRoom.GetLongDescription());
+        }
+        
+        if (itemName == "medkit")
+        {
+            if (health <= 100-50)
+            {
+                Console.WriteLine($"U used the medkit +{100-health}HP");
+                health = 100;
+                Console.WriteLine($"You healed! Your health is now: {health}HP\n");
+            }
+            else
+            {
+                Console.WriteLine("You aren't all that injured are you? \n");
+            }
+            Console.WriteLine(CurrentRoom.GetLongDescription());
+        }
+    }
+
+    public void Craft(Command command)
+    {
+        craftItem.Add(command.SecondWord);
+        craftItem.Add(command.ThirdWord);
+        
+        if(!command.HasSecondWord() || !command.HasThirdWord())
+        {
+            Console.WriteLine("What do u want to use in crafting.\n");
         }
     }
 }
