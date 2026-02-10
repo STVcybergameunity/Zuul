@@ -31,7 +31,7 @@ class Room
 
 	public void RemoveLock()
 	{
-		isLocked = true;
+		isLocked = false;
 	}
 	
 	public bool GetLock()
@@ -66,6 +66,7 @@ class Room
 		str += description;
 		str += ".\n";
 		str += GetExitString();
+		str += "\n";
 		return str;
 	}
 

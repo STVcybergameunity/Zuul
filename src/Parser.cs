@@ -28,10 +28,12 @@ class Parser
 
 		// Now check whether this word is known. If so, create a command with it.
 		if (commandLibrary.IsValidCommandWord(word1)) {
+			Console.WriteLine("");
 			return new Command(word1, word2, word3);
 		}
 
 		// If not, create a "null" command (for unknown command).
+		Console.WriteLine("");
 		return new Command(null, null, null);
 	}
 
@@ -39,6 +41,6 @@ class Parser
 	public void PrintValidCommands()
 	{
 		Console.WriteLine("Your command words are:");
-		Console.WriteLine(commandLibrary.GetCommandsString());
+		Console.WriteLine(commandLibrary.GetCommandsString(), "\n");
 	}
 }

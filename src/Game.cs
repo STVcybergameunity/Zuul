@@ -69,6 +69,7 @@ class Game
 		// And add them to the Rooms
 		carrion.Chest.Put("bandage",bandage);
 		carrion.Chest.Put("key", key);
+		carrion.Chest.Put("medkit", medkit);
 		corpse.Chest.Put("medkit", medkit);
 		bile.Chest.Put("key", key);
 		nurgle.Chest.Put("nurgling", nurgling);
@@ -97,7 +98,7 @@ class Game
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 
-			//checks if health is == 0 then stops
+			// Checks if health is == 0 then stops and makes color red
 			if (player.health == 0)
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
@@ -105,6 +106,7 @@ class Game
 				finished = true;
 			}
 		}
+		// End message and change color back to white if the game ended in a death
 		Console.ForegroundColor = ConsoleColor.White;
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
@@ -142,44 +144,67 @@ class Game
 			case "help":
 				PrintHelp();
 				break;
+
 			case "go":
 				GoRoom(command);
 				player.Damage();
 				player.LowHp();
 				break;
+
 			case "look":
 				Look();
 				break;
+
+			case "take":
+				player.TakeFromChest(command.SecondWord);
+				break;
+
+			case "place":
+				player.PutInChest(command.SecondWord);
+				break;
+
 			case "health":
 				player.SeeHealth();
 				break;
-			case "take":
-				TakeFromChest(command.SecondWord);
-				break;
-			case "place":
-				PutInChest(command.SecondWord);
-				break;
+
 			case "backpack":
 				checkInventory(command.SecondWord);
-				checkWeight(command.SecondWord);
+				player.checkWeight(command.SecondWord);
 				break;
+
+			case "checkall":
+				player.SeeHealth();
+				checkInventory(command.SecondWord);
+				player.checkWeight(command.SecondWord);
+				break;
+
 			case "use":
 				player.use(command);
 				break;
+
 			case "craft":
 				player.Craft(command);
 				break;
+
 			case "heal":
 				player.Heal(command.SecondWord);
 				break;
+
 			case "die":
 				player.Sepuccu();
 				break;
+
 			case "quit":
 				wantToQuit = true;
 				break;
+
+			case "damage":
+				player.damageNum(command.SecondWord);
+				break;
 		}
 
+		// Checks if the CurrentRoom is the same as the winroom
+		// if so make color green an print win message.
 		if (player.CurrentRoom == winRoom)
 		{
 			Console.ForegroundColor = ConsoleColor.Green;
@@ -202,6 +227,7 @@ class Game
 	{
 		if (player.CurrentRoom.Chest != null)
         {
+			// The _ is used couse the weight of the item is not necesairy here
 			foreach ( var (_, item) in player.CurrentRoom.Chest.getItems())
 			{
 				Console.WriteLine("You found :");
@@ -218,7 +244,7 @@ class Game
 	private void PrintHelp()
 	{
 		Console.WriteLine("You are lost. You are alone.");
-		Console.WriteLine("You wander around at the university.");
+		Console.WriteLine("You wander around a wierd fleshy location.");
 		Console.WriteLine();
 		// let the parser print the commands
 		parser.PrintValidCommands();
@@ -235,54 +261,6 @@ class Game
 		}
 	}
 
-	// Allows the player to see how much they are carrying and the space left
-	private void checkWeight(string weight)
-	{
-		Console.Write("Total used weight is: ");
-		Console.WriteLine(player.getBackpack().TotalWeight());
-		Console.Write("U have: ");
-		Console.WriteLine($"{player.getBackpack().FreeWeight()} weight left\n");
-	}
-
-	// Allows you to add items to a room
-	private bool PutInChest(string itemName)
-    {
-        if (player.getBackpack() != null)
-        {
-            // Remove itemName from backpack and save it
-            Item item = player.Place(itemName);
-
-            // Add the item we took to the inventory
-            player.CurrentRoom.Chest.Put(itemName, item);
-
-            // Return true
-            return true;
-        }
-
-        // If empty return false
-        return false;
-    }
-
-	    // Allows u to take a item from a room
-    private bool TakeFromChest(string itemName)
-    {
-		Item testtemp = player.CurrentRoom.Chest.Peek(itemName);
-        if (testtemp != null)
-        {
-            // Remove itemName from chest and save it
-            Item item = player.CurrentRoom.Chest.Get(itemName);
-
-            // Add the item we took to the backpack
-            player.getBackpack().Put(itemName, item);
-
-            // Return true
-            return true;
-        }
-
-        // If empty return false
-        return false;
-    }
-
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
 	private void GoRoom(Command command)
@@ -295,12 +273,17 @@ class Game
 		}
 
 		string direction = command.SecondWord;
-
 		// Try to go to the next room.
 		Room nextRoom = player.CurrentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
 			Console.WriteLine($"There is no door to {direction}!\nSee -help- for more info.");
+			return;
+		}
+		
+		if (nextRoom.GetLock() == true)
+		{
+			Console.WriteLine("This door is locked.");
 			return;
 		}
 
