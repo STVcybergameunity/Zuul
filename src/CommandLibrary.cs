@@ -21,6 +21,9 @@ class CommandLibrary
 		validCommands.Add("backpack");
 		validCommands.Add("place");
 		validCommands.Add("use");
+		validCommands.Add("craft");
+		validCommands.Add("damage");
+		validCommands.Add("checkall");
 	}
 
 	// Check whether a given string is a valid command word.
