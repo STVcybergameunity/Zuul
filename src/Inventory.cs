@@ -32,6 +32,7 @@ class Inventory
         return false;
     }
 
+    // Used to help assist add to backpack
     public Item Get(string itemName)
     {
         // Temp item creation
@@ -39,7 +40,7 @@ class Inventory
 
         if(items.ContainsKey(itemName))
         {
-            // If item extists
+            // If item exists
             // Put it in the temp
             temp = items[itemName];
 
@@ -51,7 +52,7 @@ class Inventory
         return temp;
     }
 
-    public Item peek(string itemName)
+    public Item Peek(string itemName)
     {
         // Temp item creation
         Item temp = null;
@@ -65,7 +66,7 @@ class Inventory
         return temp;
     }
 
-
+    // Adds up all of the weight of the items in the inventory
     public int TotalWeight()
     {
         int total = 0;
@@ -78,6 +79,7 @@ class Inventory
         return total;
     }
     
+    // See how much space is left in the Inventory
     public int FreeWeight()
     {
        int  freeWeight = maxWeight - TotalWeight();
