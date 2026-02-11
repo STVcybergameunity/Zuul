@@ -9,6 +9,8 @@ class Room
 	private bool isLocked;
 	private Dictionary<string, Room> exits; // stores exits of this room.
 
+	public Enemy enemy;
+
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
 	public Inventory Chest
@@ -95,4 +97,8 @@ class Room
     {
         throw new NotImplementedException();
     }
+	public void addEnemy(Enemy enemy)
+	{
+		this.enemy = enemy;
+	}
 }
