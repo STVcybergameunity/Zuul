@@ -8,7 +8,9 @@ class Game
 	private Parser parser;
 	private Player player;
 	private Room winRoom;
+	private Room nurgleRoom;
 	private List<string> ItemLib = new List<string>();
+	private List<string> RoomLib = new List<string>();
 	Random rndnum = new Random();
 
     // Constructor
@@ -34,6 +36,10 @@ class Game
 		Room teeth = new Room("in a room filled with teeth, it makes me uneasy");
 		Room secret = new Room("in the nurgles mouth. Why did I decide to do this...");
 
+		RoomLib.AddRange(carrion.GetShortDescription(), narrow.GetShortDescription(), corpse.GetShortDescription(), nurgle.GetShortDescription(),
+		silence.GetShortDescription(), bile.GetShortDescription(), rash.GetShortDescription(), teeth.GetShortDescription(),
+		secret.GetShortDescription());
+
 		// Initialise room exits
 		carrion.AddExit("east", narrow);
 		carrion.AddExit("south", nurgle);
@@ -48,6 +54,8 @@ class Game
 		nurgle.AddExit("north", carrion);
 		nurgle.AddExit("east", silence);
 		nurgle.AddExit("inside", secret);
+
+		secret.AddNurgleLock();
 
 		silence.AddExit("west", nurgle);
 
@@ -75,11 +83,12 @@ class Game
 
 		// And add them to the Rooms
 		carrion.Chest.Put("bandage",bandage);
-		carrion.Chest.Put("key", key);
-		carrion.Chest.Put("medkit", medkit);
-		carrion.Chest.Put("metalrod", metalrod);
-		carrion.Chest.Put("piston", piston);
-		carrion.Chest.Put("ducttape", ducttape);
+		// carrion.Chest.Put("key", key);
+		// carrion.Chest.Put("medkit", medkit);
+		// carrion.Chest.Put("metalrod", metalrod);
+		// carrion.Chest.Put("piston", piston);
+		// carrion.Chest.Put("ducttape", ducttape);
+		// carrion.Chest.Put("hydraulics", hydraulics);
 		corpse.Chest.Put("medkit", medkit);
 		bile.Chest.Put("key", key);
 		nurgle.Chest.Put("nurgling", nurgling);
@@ -93,13 +102,12 @@ class Game
 		// Add enemies to rooms
 		narrow.addEnemy(mountofflesh);
 
-	
-
-
 		// Start game carrion
 		player.CurrentRoom = carrion;
 
 		winRoom = teeth;
+
+		nurgleRoom = secret;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -132,7 +140,15 @@ class Game
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
     }	
-	
+
+	public void Devoured()
+	{
+		if (player.CurrentRoom == nurgleRoom)
+		{
+			Console.WriteLine("Why did I do this. I should have known it would kill me.\n");
+			player.health = 0;
+		}
+	}
 
 	// Print out the opening message for the player.
 	private void PrintWelcome()
@@ -199,21 +215,7 @@ class Game
 				break;
 
 			case "craft":
-				string craftable = player.Craft(command);
-				if (craftable == "hydraulics")
-				{
-					player.PutInChest(command.SecondWord);player.PutInChest(command.ThirdWord);player.PutInChest(command.FourthWord);
-					player.CurrentRoom.Chest.Get(command.SecondWord);player.CurrentRoom.Chest.Get(command.ThirdWord);player.CurrentRoom.Chest.Get(command.FourthWord);
-					
-					Console.WriteLine("You crafted hydraulics!\n");
-					player.getBackpack().Put("hydraulics", new Item(70, "hydraulics"));
-				}
-				else
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("You can't craft that.\n");
-					Console.ForegroundColor = ConsoleColor.White;
-				}
+				CraftHelp(command);
 				break;
 
 			case "heal":
@@ -231,6 +233,7 @@ class Game
 			case "damage":
 				player.damageNum(command.SecondWord);
 				break;
+
 			case "attack":
 				PlayerAttack();
 				break;
@@ -271,6 +274,25 @@ class Game
 			}
 		}
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+	}
+
+	private void CraftHelp(Command command)
+	{
+		string craftable = player.Craft(command);
+		if (craftable == "hydraulics")
+		{
+			player.PutInChest(command.SecondWord);player.PutInChest(command.ThirdWord);player.PutInChest(command.FourthWord);
+			player.CurrentRoom.Chest.Get(command.SecondWord);player.CurrentRoom.Chest.Get(command.ThirdWord);player.CurrentRoom.Chest.Get(command.FourthWord);
+			
+			Console.WriteLine("You crafted hydraulics!\n");
+			player.getBackpack().Put("hydraulics", new Item(70, "hydraulics"));
+		}
+		else
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine("You can't craft that.\n");
+			Console.ForegroundColor = ConsoleColor.White;
+		}
 	}
 
 	// Shows the commands again
@@ -323,6 +345,14 @@ class Game
 			return;
 		}
 
+		if (nextRoom.GetNurgleLock() == true)
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine("It's mouth is closed maybe I can open it.");
+			Console.ForegroundColor = ConsoleColor.White;
+			return;
+		}
+
 		if (player.CurrentRoom.enemy != null)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
@@ -334,6 +364,7 @@ class Game
 		player.CurrentRoom = nextRoom;
 		player.Damage();
 		player.LowHp();
+		Devoured();
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 	public void PlayerAttack()
