@@ -1,12 +1,12 @@
 class Enemy
 {
-    public int HealthEnemy;
-    public int CurrentHealthEnemy;
+    private int HealthEnemy;
+    private int CurrentHealthEnemy;
     private bool Alive
     {
         get { return CurrentHealthEnemy > 0; }
     }
-    public int AttackDamage;
+    private int AttackDamage;
     private string DescriptionEnemy;
     public Room currentroom;
 
@@ -24,6 +24,18 @@ class Enemy
     }
     public bool EnemyIsAlive()
     {
-        return Alive;
+        return this.Alive;
+    }
+    public string GetEnemyDesc()
+    {
+        return this.DescriptionEnemy;
+    }
+    public int GetEnemyDamage()
+    {
+        return this.AttackDamage;
+    }
+    public int GetEnemyCurrentHealth()
+    {
+        return this.CurrentHealthEnemy;
     }
 }
