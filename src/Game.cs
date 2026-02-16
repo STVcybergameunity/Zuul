@@ -4,6 +4,7 @@ using Microsoft.VisualBasic;
 
 class Game
 {
+	//gernerics learn pls
 	// Private fields
 	private Parser parser;
 	private Player player;
@@ -81,8 +82,8 @@ class Game
 		Item meatpack = new Item (0, "meatpack");
 		Item bookofmeat = new Item (0, "bookofmeat");
 
-		Spell fireball = new Spell ("fireball", player.PlayerAttack(45,61));
-		player.PlayerAddSpell(fireball.desc,fireball);
+		// Spell fireball = new Spell ("fireball", player.PlayerAttack(45,61));
+		// player.PlayerAddSpell(fireball.desc,fireball);
 
 		ItemLib.AddRange(bandage.Description, medkit.Description, key.Description, nurgling.Description, metalrod.Description, piston.Description, ducttape.Description, hydraulics.Description);
 

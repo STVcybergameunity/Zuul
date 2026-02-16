@@ -187,6 +187,12 @@ class Player
     public bool TakeFromChest(string itemName)
     {
 		Item testtemp = CurrentRoom.Chest.Peek(itemName);
+        if (testtemp.Weight > backpack.FreeWeight())
+        {
+            Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine($"The item is to heavy u need {testtemp.Weight - backpack.FreeWeight()} more space\n"); Console.ForegroundColor = ConsoleColor.White;
+            return false; 
+        }
+
         if (testtemp != null)
         {
             // Remove itemName from chest and save it
@@ -359,18 +365,23 @@ class Player
             return;
         }
 
+        if(!command.HasThirdWord())
+        {
+            Console.WriteLine("What spell do u want to use?\n");
+        }
+
         if (CurrentRoom.enemy == null)
 		{
 			Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("There is nothing here to attack.\n"); Console.ForegroundColor = ConsoleColor.White;
 			return;
 		}
         
-        string spellName = command.SecondWord;
-        Spell activeSpells  = PeekPlayerSpellbook(spellName);
-        if (activeSpells == null)
+        string itemName = command.SecondWord;
+        Item item  = backpack.Peek(itemName);
+        if (item == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You don't have that as a spell.\n");
+            Console.WriteLine("You don't have that as a item.\n");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(CurrentRoom.GetLongDescription());
             return;
@@ -384,7 +395,7 @@ class Player
             return;
         }
 
-        switch(spellName)
+        switch(itemName)
         {
             case "bookofmeat":
                 if (SpellsHelp(command) != 0)
@@ -483,20 +494,20 @@ class Player
         }
     }
 
-    public void PlayerAddSpell(string name, Spell spell)
-    {
-        SpellsLib.Add(name,spell);
-    }
+    // public void PlayerAddSpell(string name, Spell spell)
+    // {
+    //     SpellsLib.Add(name,spell);
+    // }
 
-    public Spell PeekPlayerSpellbook(string name)
-    {
-        if (SpellsLib.ContainsKey(name))
-        {
-            return SpellsLib[name];
-        }
-        else
-        {
-            return null;
-        }
-    }
+    // public Spell PeekPlayerSpellbook(string name)
+    // {
+    //     if (SpellsLib.ContainsKey(name))
+    //     {
+    //         return SpellsLib[name];
+    //     }
+    //     else
+    //     {
+    //         return null;
+    //     }
+    // }
 }
