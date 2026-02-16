@@ -1,0 +1,43 @@
+using System.Collections.Generic;
+
+class CommandLibrary
+{
+	// A List that holds all valid command words
+	private readonly List<string> validCommands;
+
+	// Constructor - initialise the command words.
+	public CommandLibrary()
+	{
+		validCommands = new List<string>();
+
+		validCommands.Add("help");
+		validCommands.Add("go");
+		validCommands.Add("look");
+		validCommands.Add("health");
+		validCommands.Add("heal");
+		validCommands.Add("die");
+		validCommands.Add("quit");
+		validCommands.Add("take");
+		validCommands.Add("backpack");
+		validCommands.Add("place");
+		validCommands.Add("use");
+		validCommands.Add("craft");
+		validCommands.Add("damage");
+		validCommands.Add("checkall");
+		validCommands.Add("attack");
+		validCommands.Add("cast");
+	}
+
+	// Check whether a given string is a valid command word.
+	// Return true if it is, false if it isn't.
+	public bool IsValidCommandWord(string instring)
+	{
+		return validCommands.Contains(instring);
+	}
+
+	// returns a list of valid command words as a comma separated string.
+	public string GetCommandsString()
+	{
+		return String.Join(", ", validCommands);
+	}
+}
