@@ -6,6 +6,7 @@ class Room
 
 	private Inventory chest;
 	private string description;
+	private string nameRoom;
 	private bool isLocked;
 	private bool isNurgleLocked;
 	private Dictionary<string, Room> exits; // stores exits of this room.
@@ -19,8 +20,9 @@ class Room
 		get { return chest; }
 	}
 
-	public Room(string desc)
+	public Room(string name,string desc)
 	{
+		nameRoom = name;
 		description = desc;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(10000);
@@ -72,6 +74,11 @@ class Room
 	public string GetShortDescription()
 	{
 		return description;
+	}
+
+	public string getNameRoom()
+	{
+		return nameRoom;
 	}
 
 	// Return a long description of this room, in the form:

@@ -38,4 +38,10 @@ class Enemy
     {
         return this.CurrentHealthEnemy;
     }
+
+    public int HealEnemy(int hpHealEnemy)
+    {
+        CurrentHealthEnemy = hpHealEnemy;
+        return CurrentHealthEnemy;
+    }
 }

@@ -10,7 +10,7 @@ class Player
     public int enemyAttack = 0;
     Random rndnum = new Random();
     public int tel = 0;
-    private Dictionary<string, Spell> SpellsLib = new Dictionary<string, Spell>();
+    
     // Makes a player with HP and a Inventory
     public Player()
     {
@@ -493,21 +493,4 @@ class Player
             return "hydraulics";
         }
     }
-
-    // public void PlayerAddSpell(string name, Spell spell)
-    // {
-    //     SpellsLib.Add(name,spell);
-    // }
-
-    // public Spell PeekPlayerSpellbook(string name)
-    // {
-    //     if (SpellsLib.ContainsKey(name))
-    //     {
-    //         return SpellsLib[name];
-    //     }
-    //     else
-    //     {
-    //         return null;
-    //     }
-    // }
 }

@@ -8,10 +8,15 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
+	private int rndEnemyCount;
+	// Define rooms for locks
 	private Room winRoom;
 	private Room nurgleRoom;
+	// Make lists for randomisation
 	private List<string> ItemLib = new List<string>();
+	private List<string> EnemyLib = new List<string>();
 	private List<string> RoomLib = new List<string>();
+	// Make a random
 	Random rndnum = new Random();
 
     // Constructor
@@ -27,19 +32,19 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room carrion = new Room("in a fleshy place");
-		Room narrow = new Room("in a hallway filled with flesh, it's so narrow where does it lead");
-		Room corpse = new Room("in a open area, there is a corpse here. It smells");
-		Room nurgle = new Room("in a room with a horrible smell. There is something here, it's green and slimey..");
-		Room silence = new Room("in a room that is completely silent, this is unusual....");
-		Room bile = new Room("in a pool of bile, u feel your skin crawl");
-		Room rash = new Room("in a room filled with rashes, I feel like i'm gonna vomit");
-		Room teeth = new Room("in a room filled with teeth, it makes me uneasy");
-		Room secret = new Room("in the nurgles mouth. Why did I decide to do this...");
+		Room carrion = new Room("carrion","in a fleshy place");
+		Room narrow = new Room("narrow","in a hallway filled with flesh, it's so narrow where does it lead");
+		Room corpse = new Room("corpse","in a open area, there is a corpse here. It smells");
+		Room nurgle = new Room("nurgle","in a room with a horrible smell. There is something here, it's green and slimey..");
+		Room silence = new Room("silence","in a room that is completely silent, this is unusual....");
+		Room bile = new Room("bile","in a pool of bile, u feel your skin crawl");
+		Room rash = new Room("rash","in a room filled with rashes, I feel like i'm gonna vomit");
+		Room teeth = new Room("teeth","in a room filled with teeth, it makes me uneasy");
+		Room secret = new Room("secret","in the nurgles mouth. Why did I decide to do this...");
 
-		RoomLib.AddRange(carrion.GetShortDescription(), narrow.GetShortDescription(), corpse.GetShortDescription(), nurgle.GetShortDescription(),
-		silence.GetShortDescription(), bile.GetShortDescription(), rash.GetShortDescription(), teeth.GetShortDescription(),
-		secret.GetShortDescription());
+		// Add to roomLib
+		RoomLib.AddRange(narrow.getNameRoom(), corpse.getNameRoom(), nurgle.getNameRoom(),
+		silence.getNameRoom(), bile.getNameRoom(), rash.getNameRoom());
 
 		// Initialise room exits
 		carrion.AddExit("east", narrow);
@@ -82,9 +87,7 @@ class Game
 		Item meatpack = new Item (0, "meatpack");
 		Item bookofmeat = new Item (0, "bookofmeat");
 
-		// Spell fireball = new Spell ("fireball", player.PlayerAttack(45,61));
-		// player.PlayerAddSpell(fireball.desc,fireball);
-
+		// Add to itemlib
 		ItemLib.AddRange(bandage.Description, medkit.Description, key.Description, nurgling.Description, metalrod.Description, piston.Description, ducttape.Description, hydraulics.Description);
 
 		// And add them to the Rooms
@@ -107,9 +110,58 @@ class Game
 
 		// Create enemies
 		Enemy mountofflesh = new Enemy(100, "mountofflesh", player.enemyAttack);
+		Enemy intestineworm = new Enemy(40, "intestineworm", player.enemyAttack);
+
+		// Add to enemylib
+		EnemyLib.AddRange(mountofflesh.GetEnemyDesc(), intestineworm.GetEnemyDesc());
+
+		// Randomise enemies
+
+		// Implement after asking teacher/mert 
+
+		// switch (RandomEnemy())
+		// {
+		// 	case "mountofflesh":
+		// 		Enemy rnd = mountofflesh;
+		// 		break;
+		// 	case "intestineworm":
+		// 		Enemy rnd = intestineworm;
+		// 		break;
+		// 	default:
+		// 		Enemy rnd = null;
+		// 		break;
+		// }
 
 		// Add enemies to rooms
-		narrow.addEnemy(mountofflesh);
+		narrow.addEnemy(intestineworm);
+
+		do
+		{
+			switch (RandomRoom())
+			{
+				case "carrion":
+					RandEnemySpawn(carrion, mountofflesh /*planned for rnd late*/);
+					break;
+				case "corpse":
+					RandEnemySpawn(corpse, mountofflesh);
+					break;
+				case "nurgle":
+					RandEnemySpawn(nurgle, intestineworm);
+					break;
+				case "silence":
+					RandEnemySpawn(silence, mountofflesh);
+					break;
+				case "bile":
+					RandEnemySpawn(bile, intestineworm);
+					break;
+				case "rash":
+					RandEnemySpawn(rash, mountofflesh);
+					break;
+				default:
+					break;
+			}
+			rndEnemyCount += 1;
+		}while (rndEnemyCount != 5);
 
 		// Start game carrion
 		player.CurrentRoom = carrion;
@@ -163,6 +215,23 @@ class Game
     {
         return player;
     }
+
+	private string RandomRoom()
+	{
+		List<string> T = new List<string>();
+		T = RoomLib;
+		string randTemp = T[rndnum.Next(RoomLib.Count)];
+		T.Remove(randTemp);
+		return randTemp;
+	}
+
+	private string RandomEnemy()
+	{
+		List<string> T = new List<string>();
+		T = EnemyLib;
+		string randTempEnemy = T[rndnum.Next(EnemyLib.Count)];
+		return randTempEnemy;
+	}
 
 	// Print out the opening message for the player.
 	private void PrintWelcome()
@@ -319,6 +388,14 @@ class Game
 		}
 	}
 
+	private void RandEnemySpawn(Room rname,Enemy name)
+	{
+		if (rndnum.Next(1,3) == 1)
+		{
+			rname.addEnemy(name);
+		}
+	}
+
 	// Shows the commands again
 	private void PrintHelp()
 	{
@@ -426,14 +503,14 @@ class Game
 		else
 		{
 			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("You slayed the thing.");
+			Console.WriteLine("You slayed the thing.\n");
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 
 		if (!player.isAlive())
 		{
-			Console.WriteLine($"You died in combat due to {player.CurrentRoom.enemy.GetEnemyDesc()}");
+			Console.WriteLine($"You died in combat due to {player.CurrentRoom.enemy.GetEnemyDesc()}\n");
 		}
 
 		if (!player.CurrentRoom.enemy.EnemyIsAlive())
