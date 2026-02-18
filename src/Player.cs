@@ -3,12 +3,13 @@ using System.Runtime.InteropServices;
 class Player
 {
     //fields
-    private Inventory backpack;
-    public int health;
+    protected Inventory backpack;
+    private int health;
     // auto property
     public Room CurrentRoom { get; set; }
     public int enemyAttack = 0;
-    Random rndnum = new Random();
+    public Dictionary<string,Item> craftingshit = new Dictionary<string, Item>();
+    public Random rndnum = new Random();
     public int tel = 0;
     
     // Makes a player with HP and a Inventory
@@ -22,6 +23,16 @@ class Player
     public Inventory getBackpack()
     {
         return backpack;
+    }
+
+    public Room GetRoom()
+    {
+        return CurrentRoom;
+    }
+
+    public int getHealth()
+    {
+        return health;
     }
 
     public Item Place(string itemName)
@@ -54,9 +65,9 @@ class Player
 
     // A method that allows you to take damage
     // Can later be inplemented for on a hit taken /Maybe with random int
-    public void Damage(int temp)
+    public void Damage(int damage)
 	{
-		health -=temp;
+		health -=damage;
 	}
 
     // Heals the player but only if u can heal with a amount of hp u choose
@@ -387,13 +398,12 @@ class Player
 
                 else 
                 {
-                    GiveToPlayer("bookofmeat");
+                    backpack.Put("bookofmeat", new Item(0,"bookofmeat"));
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("The nurgling was devoured and a book remained. You gained the bookofmeat.\n");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                 }
-                
                 break;
             
             default:
@@ -402,10 +412,6 @@ class Player
         }
     }
 
-    public void GiveToPlayer(string itemName)
-    {
-        getBackpack().Put(itemName, Game.SpellUpgrade);
-    }
     public void Spells(Command command)
     {
         if(!command.HasSecondWord())
@@ -522,8 +528,6 @@ class Player
             Console.ForegroundColor = ConsoleColor.White;
             return null;
         }
-
-        Dictionary<string,Item> craftingshit = new Dictionary<string, Item>();
 
         craftingshit.Add(command.SecondWord,craftItem);
         craftingshit.Add(command.ThirdWord,craftItem2);

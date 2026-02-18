@@ -1,6 +1,6 @@
 using System.Collections;
 
-class Inventory
+class Inventory : Player
 {
     //fields
     private int maxWeight;

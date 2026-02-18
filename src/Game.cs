@@ -7,19 +7,18 @@ class Game
 	//gernerics learn pls
 	// Private fields
 	private Parser parser;
-	private Player player;
+	protected Player player;
 	private int rndEnemyCount;
 	private int itemChance = 1;
 	// Define rooms for locks
 	private Room winRoom;
 	private Room nurgleRoom;
-	public static Item SpellUpgrade;
 	// Make lists for randomisation
 	private List<string> ItemLib = new List<string>();
 	private List<string> EnemyLib = new List<string>();
 	private List<string> RoomLib = new List<string>();
+	private PrintInColor printincolor = null;
 	// Make a random
-	Random rndnum = new Random();
 
     // Constructor
 	// Makes the player object, parser object and room objects
@@ -87,7 +86,6 @@ class Game
 		Item ducttape = new Item (5, "ducttape");
 		Item hydraulics = new Item (70, "hydraulics");
 		Item meatpack = new Item (0, "meatpack");
-		Item bookofmeat = new Item (0, "bookofmeat");
 
 		// Add to itemlib
 		ItemLib.AddRange(bandage.Description, medkit.Description, key.Description, nurgling.Description, metalrod.Description, piston.Description, ducttape.Description, hydraulics.Description);
@@ -99,9 +97,9 @@ class Game
 		// carrion.Chest.Put("bookofmeat", bookofmeat);
 		// carrion.Chest.Put("key", key);
 		// carrion.Chest.Put("medkit", medkit);
-		// carrion.Chest.Put("metalrod", metalrod);
-		// carrion.Chest.Put("piston", piston);
-		// carrion.Chest.Put("ducttape", ducttape);
+		carrion.Chest.Put("metalrod", metalrod);
+		carrion.Chest.Put("piston", piston);
+		carrion.Chest.Put("ducttape", ducttape);
 		// carrion.Chest.Put("hydraulics", hydraulics);
 		corpse.Chest.Put("medkit", medkit);
 		bile.Chest.Put("key", key);
@@ -177,8 +175,6 @@ class Game
 
 		winRoom = teeth;
 
-		SpellUpgrade = bookofmeat;
-
 		nurgleRoom = secret;
 	}
 
@@ -199,7 +195,7 @@ class Game
 			finished = ProcessCommand(command);
 
 			// Checks if health is <= 0 then stops and makes color red
-			if (player.health <= 0)
+			if (player.getHealth() <= 0)
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine("Game Over\n");
@@ -218,7 +214,7 @@ class Game
 		if (player.CurrentRoom == nurgleRoom)
 		{
 			Console.WriteLine("Why did I do this. I should have known it would kill me.\n");
-			player.health = 0;
+			player.Damage(player.getHealth());
 		}
 	}
 
@@ -226,7 +222,7 @@ class Game
 	{
 		List<string> T = new List<string>();
 		T = RoomLib;
-		string randTemp = T[rndnum.Next(RoomLib.Count)];
+		string randTemp = T[player.rndnum.Next(RoomLib.Count)];
 		T.Remove(randTemp);
 		return randTemp;
 	}
@@ -235,7 +231,7 @@ class Game
 	{
 		List<string> T = new List<string>();
 		T = EnemyLib;
-		string randTempEnemy = T[rndnum.Next(EnemyLib.Count)];
+		string randTempEnemy = T[player.rndnum.Next(EnemyLib.Count)];
 		return randTempEnemy;
 	}
 
@@ -300,7 +296,7 @@ class Game
 				break;
 
 			case "use":
-				player.Use(command);
+				PlayerUse(command);
 				break;
 
 			case "craft":
@@ -322,6 +318,7 @@ class Game
 			case "damage":
 				player.damageNum(command.SecondWord);
 				break;
+
 			case "cast":
 				player.Spells(command);
 				break;
@@ -375,18 +372,16 @@ class Game
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 
-	public Item getItem()
-	{
-		return SpellUpgrade;
-	}
-
 	private void CraftHelp(Command command)
 	{
 		string craftable = player.Craft(command);
 		if (craftable == "hydraulics")
 		{
-			player.PutInChest(command.SecondWord);player.PutInChest(command.ThirdWord);player.PutInChest(command.FourthWord);
-			player.CurrentRoom.Chest.Get(command.SecondWord);player.CurrentRoom.Chest.Get(command.ThirdWord);player.CurrentRoom.Chest.Get(command.FourthWord);
+			foreach (string thing in player.craftingshit.Keys)
+			{
+				player.PutInChest(thing);
+				player.CurrentRoom.Chest.Get(thing);
+			}
 			
 			Console.WriteLine("You crafted hydraulics!\n");
 			player.getBackpack().Put("hydraulics", new Item(70, "hydraulics"));
@@ -401,7 +396,7 @@ class Game
 
 	private void RandEnemySpawn(Room rname,Enemy name)
 	{
-		if (rndnum.Next(1,3) == 1)
+		if (player.rndnum.Next(1,3) == 1)
 		{
 			rname.addEnemy(name);
 		}
@@ -409,7 +404,7 @@ class Game
 
 	private void RandItemSpawn(Room rname,Item name)
 	{
-		if (rndnum.Next(1,itemChance) == 1)
+		if (player.rndnum.Next(1,itemChance) == 1)
 		{
 			rname.Chest.Put($"{name}",name);
 		}
@@ -424,6 +419,11 @@ class Game
 		Console.WriteLine();
 		// let the parser print the commands
 		parser.PrintValidCommands();
+	}
+
+	private void PlayerUse(Command command)
+	{
+		player.Use(command);
 	}
 
 	//See what you have in your inventory
@@ -505,7 +505,7 @@ class Game
 
 		if (player.CurrentRoom.enemy == null)
 		{
-			Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("There is nothing here to attack.\n"); Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red("There is nothing here to attack.\n");
 			return;
 		}
 
@@ -514,23 +514,21 @@ class Game
 		playerAttack = player.PlayerAttack(20,25);
 		player.enemyAttack = player.EnemyAttack(15, 25);
 		
-		Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine($"You got hit for {player.enemyAttack} damage. You got {player.health}HP left\n"); Console.ForegroundColor = ConsoleColor.Green;
+		printincolor.Red($"You got hit for {player.enemyAttack} damage."); printincolor.Green("You got {player.getHealth()}HP left\n");
 		if (player.CurrentRoom.enemy.GetEnemyCurrentHealth() > 0)
 		{
-			Console.WriteLine($"You hit the enemy for {playerAttack} damage. It still has {player.CurrentRoom.enemy.GetEnemyCurrentHealth()}HP remaining\n");
+			printincolor.Green($"You hit the enemy for {playerAttack} damage. It still has {player.CurrentRoom.enemy.GetEnemyCurrentHealth()}HP remaining\n");
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 		else
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("You slayed the thing.\n");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Green("You slayed the thing.\n");
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 
 		if (!player.isAlive())
 		{
-			Console.WriteLine($"You died in combat due to {player.CurrentRoom.enemy.GetEnemyDesc()}\n");
+			printincolor.Red($"You died in combat due to {player.CurrentRoom.enemy.GetEnemyDesc()}\n");
 		}
 
 		if (!player.CurrentRoom.enemy.EnemyIsAlive())
