@@ -254,9 +254,9 @@ class Player
         switch(itemName)
         {
             case "bandage":
-                if (health <= 100-20)
+                if (health <= 100-40)
                 {
-                    health += 20;
+                    health += 40;
                     Console.WriteLine("You used the bandage +20HP");
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"You healed! Your health is now: {health}HP\n");
