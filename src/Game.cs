@@ -9,9 +9,11 @@ class Game
 	private Parser parser;
 	private Player player;
 	private int rndEnemyCount;
+	private int itemChance = 1;
 	// Define rooms for locks
 	private Room winRoom;
 	private Room nurgleRoom;
+	public static Item SpellUpgrade;
 	// Make lists for randomisation
 	private List<string> ItemLib = new List<string>();
 	private List<string> EnemyLib = new List<string>();
@@ -91,10 +93,10 @@ class Game
 		ItemLib.AddRange(bandage.Description, medkit.Description, key.Description, nurgling.Description, metalrod.Description, piston.Description, ducttape.Description, hydraulics.Description);
 
 		// And add them to the Rooms
-		carrion.Chest.Put("bandage",bandage);
-		carrion.Chest.Put("meatpack", meatpack);
-		carrion.Chest.Put("nurgling", nurgling);
-		carrion.Chest.Put("bookofmeat", bookofmeat);
+		// carrion.Chest.Put("bandage",bandage);
+		// carrion.Chest.Put("meatpack", meatpack);
+		// carrion.Chest.Put("nurgling", nurgling);
+		// carrion.Chest.Put("bookofmeat", bookofmeat);
 		// carrion.Chest.Put("key", key);
 		// carrion.Chest.Put("medkit", medkit);
 		// carrion.Chest.Put("metalrod", metalrod);
@@ -107,6 +109,8 @@ class Game
 		rash.Chest.Put("metalrod", metalrod);
 		corpse.Chest.Put("piston", piston);
 		narrow.Chest.Put("ducttape", ducttape);
+		
+		secret.addNurgleDrop();
 
 		// Create enemies
 		Enemy mountofflesh = new Enemy(100, "mountofflesh", player.enemyAttack);
@@ -141,21 +145,26 @@ class Game
 			{
 				case "carrion":
 					RandEnemySpawn(carrion, mountofflesh /*planned for rnd late*/);
+					RandItemSpawn(carrion, bandage);
 					break;
 				case "corpse":
 					RandEnemySpawn(corpse, mountofflesh);
 					break;
 				case "nurgle":
 					RandEnemySpawn(nurgle, intestineworm);
+					RandItemSpawn(nurgle, bandage);
 					break;
 				case "silence":
 					RandEnemySpawn(silence, mountofflesh);
+					RandItemSpawn(silence, bandage);
 					break;
 				case "bile":
 					RandEnemySpawn(bile, intestineworm);
+					RandItemSpawn(bile, bandage);
 					break;
 				case "rash":
 					RandEnemySpawn(rash, mountofflesh);
+					RandItemSpawn(rash, bandage);
 					break;
 				default:
 					break;
@@ -167,6 +176,8 @@ class Game
 		player.CurrentRoom = carrion;
 
 		winRoom = teeth;
+
+		SpellUpgrade = bookofmeat;
 
 		nurgleRoom = secret;
 	}
@@ -210,11 +221,6 @@ class Game
 			player.health = 0;
 		}
 	}
-
-	public Player GetPlayer()
-    {
-        return player;
-    }
 
 	private string RandomRoom()
 	{
@@ -369,6 +375,11 @@ class Game
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 
+	public Item getItem()
+	{
+		return SpellUpgrade;
+	}
+
 	private void CraftHelp(Command command)
 	{
 		string craftable = player.Craft(command);
@@ -394,6 +405,15 @@ class Game
 		{
 			rname.addEnemy(name);
 		}
+	}
+
+	private void RandItemSpawn(Room rname,Item name)
+	{
+		if (rndnum.Next(1,itemChance) == 1)
+		{
+			rname.Chest.Put($"{name}",name);
+		}
+		itemChance = itemChance * 2;
 	}
 
 	// Shows the commands again

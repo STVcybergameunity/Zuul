@@ -228,6 +228,7 @@ class Player
         // If empty return false
         return false;
     }
+
     // Uses a item
     public void Use(Command command)
     {
@@ -295,6 +296,11 @@ class Player
 
             case "key":
 
+                if (!command.HasThirdWord())
+                {
+                    return;
+                }
+
                 Room lockedRoom = CurrentRoom.GetExit(command.ThirdWord);
 
                 if (lockedRoom == null)
@@ -335,7 +341,7 @@ class Player
                     return;
                 }
 
-                else if (!nurgleLockedRoom.GetNurgleLock())
+                if (!nurgleLockedRoom.GetNurgleLock())
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("I can't use that here\n");
@@ -351,12 +357,55 @@ class Player
                 Console.WriteLine(CurrentRoom.GetLongDescription());
                 break;
             
+            case "nurgling":
+
+                if (!command.HasThirdWord())
+                {
+                    Console.WriteLine("Where shall I use this?\n");
+                    Console.WriteLine(CurrentRoom.GetLongDescription());
+                    return;
+                }
+
+                Room nurgleDrop = CurrentRoom.GetExit(command.ThirdWord);
+
+                if (!nurgleDrop.GetNurgleDrop())
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("I can't use that here\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(CurrentRoom.GetLongDescription());
+                    return;
+                }
+
+                else if (nurgleDrop.GetNurgleLock())
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("It's mouth is still closed maybe I can open it.\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(CurrentRoom.GetLongDescription());
+                }
+
+                else 
+                {
+                    GiveToPlayer("bookofmeat");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("The nurgling was devoured and a book remained. You gained the bookofmeat.\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(CurrentRoom.GetLongDescription());
+                }
+                
+                break;
+            
             default:
                 Console.WriteLine($"You can't use {command.SecondWord}.");
                 break;
         }
     }
 
+    public void GiveToPlayer(string itemName)
+    {
+        getBackpack().Put(itemName, Game.SpellUpgrade);
+    }
     public void Spells(Command command)
     {
         if(!command.HasSecondWord())

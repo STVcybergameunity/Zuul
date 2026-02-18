@@ -9,6 +9,7 @@ class Room
 	private string nameRoom;
 	private bool isLocked;
 	private bool isNurgleLocked;
+	private bool nurgleDrop;
 	private Dictionary<string, Room> exits; // stores exits of this room.
 
 	public Enemy enemy;
@@ -27,6 +28,7 @@ class Room
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(10000);
 		isLocked = false;
+		nurgleDrop = false;
 	}
 
 	public void AddLock()
@@ -44,6 +46,11 @@ class Room
 		isNurgleLocked = true;
 	}
 
+	public void addNurgleDrop()
+	{
+		nurgleDrop = true;
+	}
+
 	public void RemoveNurgleLock()
 	{
 		isNurgleLocked = false;
@@ -52,6 +59,11 @@ class Room
 	public bool GetLock()
 	{
 		return isLocked;
+	}
+
+	public bool GetNurgleDrop()
+	{
+		return nurgleDrop;
 	}
 
 	public bool GetNurgleLock()
