@@ -5,6 +5,7 @@ class Player
     //fields
     protected Inventory backpack;
     private int health;
+    private PrintInColor printincolor = null;
     // auto property
     public Room CurrentRoom { get; set; }
     public int enemyAttack = 0;
@@ -80,20 +81,16 @@ class Player
             if (health <= 100-hptot)
             {
                 health += hptot;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"You healed! Your health is now: {health}HP");
-                Console.ForegroundColor = ConsoleColor.White;
+                printincolor.Green($"You healed! Your health is now: {health}HP");
             }
             else
             {
-                Console.WriteLine("You aren't all that injured are you?");
+                printincolor.Red("You aren't all that injured are you?");
             }
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Please add a valid number...");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("Please add a valid number...");
         }
 	}
 
@@ -105,9 +102,7 @@ class Player
             if (health >= hptot)
             {
                 health -= hptot;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"You took {hptot} damage! Your health is now: {health}HP");
-                Console.ForegroundColor = ConsoleColor.White;
+                printincolor.Red($"You took {hptot} damage! Your health is now: {health}HP");
             }
             else
             {
@@ -126,15 +121,11 @@ class Player
 	{
 		if (health <= 40 && health >= 30)
 		{
-            Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"You feel hurt.");
-            Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red($"You feel hurt.");
 		}
 		else if(health <= 20)
-		{
-            Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"You feel miserable. U should heal!");
-            Console.ForegroundColor = ConsoleColor.White;
+        {
+			printincolor.Red($"You feel miserable. U should heal!");
 		}
 	}
 
@@ -181,9 +172,7 @@ class Player
 		if (dodgenrplayer == 1)
 		{
 			CurrentRoom.enemy.DamageEnemy(playerAttack);
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You missed\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("You missed\n");
             return playerAttack;
 		}
 
@@ -200,7 +189,7 @@ class Player
 		Item testtemp = CurrentRoom.Chest.Peek(itemName);
         if (testtemp.Weight > backpack.FreeWeight())
         {
-            Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine($"The item is to heavy u need {testtemp.Weight - backpack.FreeWeight()} more space\n"); Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red($"The item is to heavy u need {testtemp.Weight - backpack.FreeWeight()} more space\n");
             return false; 
         }
 
@@ -254,9 +243,7 @@ class Player
         backpack.Get(itemName);
         if (item == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You don't have that as a item.\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("You don't have that as a item.\n");
             Console.WriteLine(CurrentRoom.GetLongDescription());
             return;
         }
@@ -269,9 +256,7 @@ class Player
                 {
                     health += 40;
                     Console.WriteLine("You used the bandage +20HP");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"You healed! Your health is now: {health}HP\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Green($"You healed! Your health is now: {health}HP\n");
                 }
 
                 else
@@ -287,9 +272,7 @@ class Player
                 {
                     Console.WriteLine($"U used the medkit +{100-health}HP");
                     health = 100;
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"You healed! Your health is now: {health}HP\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Green($"You healed! Your health is now: {health}HP\n");
                 }
 
                 else
@@ -316,26 +299,20 @@ class Player
 
                 if (lockedRoom == null)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("No room in that direction.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("No room in that direction.\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                     return;
                 }
 
                 else if (!lockedRoom.GetLock())
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Room isn't locked.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("Room isn't locked.\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                     return;
                 }
 
                 lockedRoom.RemoveLock();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("The door is now unlocked.\n");
-                Console.ForegroundColor = ConsoleColor.White;
+                printincolor.Green("The door is now unlocked.\n");
                 Console.WriteLine(CurrentRoom.GetLongDescription());
                 break;
 
@@ -345,26 +322,20 @@ class Player
 
                 if (nurgleLockedRoom == null)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("No room in that direction.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("No room in that direction.\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                     return;
                 }
 
                 if (!nurgleLockedRoom.GetNurgleLock())
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("I can't use that here\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("I can't use that here\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                     return;
                 }
 
                 nurgleLockedRoom.RemoveNurgleLock();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("It's open now the smell is horrible\n");
-                Console.ForegroundColor = ConsoleColor.White;
+                printincolor.Green("It's open now the smell is horrible\n");
                 Console.WriteLine(CurrentRoom.GetLongDescription());
                 break;
             
@@ -381,27 +352,21 @@ class Player
 
                 if (!nurgleDrop.GetNurgleDrop())
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("I can't use that here\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("I can't use that here\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                     return;
                 }
 
                 else if (nurgleDrop.GetNurgleLock())
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("It's mouth is still closed maybe I can open it.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Red("It's mouth is still closed maybe I can open it.\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                 }
 
                 else 
                 {
                     backpack.Put("bookofmeat", new Item(0,"bookofmeat"));
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("The nurgling was devoured and a book remained. You gained the bookofmeat.\n");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    printincolor.Green("The nurgling was devoured and a book remained. You gained the bookofmeat.\n");
                     Console.WriteLine(CurrentRoom.GetLongDescription());
                 }
                 break;
@@ -427,7 +392,7 @@ class Player
 
         if (CurrentRoom.enemy == null)
 		{
-			Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("There is nothing here to attack.\n"); Console.ForegroundColor = ConsoleColor.White;
+	        printincolor.Red("There is nothing here to attack.\n");
 			return;
 		}
         
@@ -435,18 +400,14 @@ class Player
         Item item  = backpack.Peek(itemName);
         if (item == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You don't have that as a item.\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("You don't have that as a item.\n");
             Console.WriteLine(CurrentRoom.GetLongDescription());
             return;
         }
 
         if (tel != 0)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You can only use one spell per turn\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("You can only use one spell per turn\n");
             return;
         }
 
@@ -465,16 +426,12 @@ class Player
         
         if (CurrentRoom.enemy.GetEnemyCurrentHealth() > 0)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"The enemy has {CurrentRoom.enemy.GetEnemyCurrentHealth()}HP remaining\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red($"The enemy has {CurrentRoom.enemy.GetEnemyCurrentHealth()}HP remaining\n");
         }
         
         else
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("You slayed the thing.\n");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Green("You slayed the thing.\n");
             Console.WriteLine(CurrentRoom.GetLongDescription());
 		}
 
@@ -492,11 +449,11 @@ class Player
         {
             case "fireball":
                 damageSpell = PlayerAttack(45,61);
-                Console.WriteLine($"You used {spellName} you dealt {damageSpell} damage");
+                printincolor.Green($"You used {spellName} you dealt {damageSpell} damage");
                 return damageSpell;
 
             default:
-                Console.WriteLine($"You don't have the spell {command.ThirdWord}.");
+                printincolor.Red($"You don't have the spell {command.ThirdWord}.");
                 break;
         }
         return damageSpell;
@@ -507,13 +464,13 @@ class Player
     {
         if  (!command.HasSecondWord() || !command.HasThirdWord())
         {
-            Console.WriteLine("What do u want to use in crafting.\n");
+            printincolor.Red("What do u want to use in crafting.\n");
             return null;
         }
 
         else if (!command.HasFourthWord())
         {
-            Console.WriteLine("I need one more thing.\n");
+            printincolor.Red("I need one more thing.\n");
             return null;
         }
 
@@ -523,9 +480,7 @@ class Player
 
         if (craftItem == null || craftItem2 == null || craftItem3 == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You don't have that item.");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("You don't have that item.");
             return null;
         }
 
@@ -535,9 +490,7 @@ class Player
 
         if (!craftingshit.ContainsKey("metalrod") || !craftingshit.ContainsKey("piston") || !craftingshit.ContainsKey("ducttape"))
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Those weren't the correct items.\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            printincolor.Red("Those weren't the correct items.\n");
             return null;
         }
 

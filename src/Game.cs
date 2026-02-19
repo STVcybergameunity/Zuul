@@ -197,8 +197,7 @@ class Game
 			// Checks if health is <= 0 then stops and makes color red
 			if (player.getHealth() <= 0)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Game Over\n");
+				printincolor.Red("Game Over\n");
 				finished = true;
 			}
 		}
@@ -332,8 +331,7 @@ class Game
 		// if so make color green an print win message.
 		if (player.CurrentRoom == winRoom)
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("\nYou Won\n");
+			printincolor.Green("\nYou Won\n");
 			wantToQuit = true;
 		}
 
@@ -365,9 +363,7 @@ class Game
 
 		if (player.CurrentRoom.enemy != null)
 		{
-			Console.BackgroundColor = ConsoleColor.Red;
-			Console.WriteLine($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} here.\n");
-			Console.BackgroundColor = ConsoleColor.White;
+			printincolor.Red($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} here.\n");
 		}
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
@@ -388,9 +384,7 @@ class Game
 		}
 		else
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine("You can't craft that.\n");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red("You can't craft that.\n");
 		}
 	}
 
@@ -453,32 +447,25 @@ class Game
 		Room nextRoom = player.CurrentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"There is no door to {direction}!\n{Console.ForegroundColor = ConsoleColor.White}See -help- for more info.");
+			printincolor.Red($"There is no door to {direction}!\n"); Console.WriteLine("See -help- for more info.");
 			return;
 		}
 		
 		if (nextRoom.GetLock() == true)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine("This door is locked.");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red("This door is locked.");
 			return;
 		}
 
 		if (nextRoom.GetNurgleLock() == true)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine("It's mouth is closed maybe I can open it.");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red("It's mouth is closed maybe I can open it.");
 			return;
 		}
 
 		if (player.CurrentRoom.enemy != null)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} in this room. Use attack or cast to kill it.\n");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} in this room. Use attack or cast to kill it.\n");
 			return;
 		}
 
@@ -486,9 +473,7 @@ class Game
 
 		if (nextRoom.enemy != null)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} in this room. Use attack or cast to kill it.\n");
-			Console.ForegroundColor = ConsoleColor.White;
+			printincolor.Red($"There is a {player.CurrentRoom.enemy.GetEnemyDesc()} in this room. Use attack or cast to kill it.\n");
 		}
 
 		player.Damage(5);

@@ -4,6 +4,7 @@ class Inventory
 {
     //fields
     private int maxWeight;
+    private PrintInColor printincolor = null;
     private Dictionary<string, Item> items;
 
     //constructor
@@ -28,7 +29,7 @@ class Inventory
             items.Add(item.Description, item);
             return true;
         }
-        Console.WriteLine($"You can't carry anymore\nWeight left {FreeWeight()} the item weights is {item.Weight}");
+        printincolor.Red($"You can't carry anymore\nWeight left {FreeWeight()} the item weights is {item.Weight}");
         return false;
     }
 
