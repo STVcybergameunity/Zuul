@@ -9,7 +9,7 @@ class Game
 	private Player player;
 	private int rndEnemyCount;
 	private int itemChance = 1;
-	private PrintInColor printincolor = null;
+	private PrintInColor printincolor = new PrintInColor();
 	// Define rooms for locks
 	private Room winRoom;
 	private Room nurgleRoom;
