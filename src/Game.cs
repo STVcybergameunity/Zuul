@@ -10,6 +10,7 @@ class Game
 	protected Player player;
 	private int rndEnemyCount;
 	private int itemChance = 1;
+	private PrintInColor printincolor = null;
 	// Define rooms for locks
 	private Room winRoom;
 	private Room nurgleRoom;
@@ -17,11 +18,7 @@ class Game
 	private List<string> ItemLib = new List<string>();
 	private List<string> EnemyLib = new List<string>();
 	private List<string> RoomLib = new List<string>();
-	private PrintInColor printincolor = null;
-	// Make a random
 
-    // Constructor
-	// Makes the player object, parser object and room objects
     public Game()
 	{
 		parser = new Parser();
@@ -117,26 +114,10 @@ class Game
 		// Add to enemylib
 		EnemyLib.AddRange(mountofflesh.GetEnemyDesc(), intestineworm.GetEnemyDesc());
 
-		// Randomise enemies
-
-		// Implement after asking teacher/mert 
-
-		// switch (RandomEnemy())
-		// {
-		// 	case "mountofflesh":
-		// 		Enemy rnd = mountofflesh;
-		// 		break;
-		// 	case "intestineworm":
-		// 		Enemy rnd = intestineworm;
-		// 		break;
-		// 	default:
-		// 		Enemy rnd = null;
-		// 		break;
-		// }
-
-		// Add enemies to rooms
+		// Add enemys to the rooms
 		narrow.addEnemy(intestineworm);
 
+		// Randomise if a enemy spawns in that room and randomise if it has a bandage
 		do
 		{
 			switch (RandomRoom())
@@ -208,6 +189,7 @@ class Game
 		Console.ReadLine();
     }	
 
+	// Checks if you are in the specified room if so you die
 	public void Devoured()
 	{
 		if (player.CurrentRoom == nurgleRoom)
@@ -217,6 +199,7 @@ class Game
 		}
 	}
 
+	// Used to randomise rooms
 	private string RandomRoom()
 	{
 		List<string> T = new List<string>();
@@ -224,14 +207,6 @@ class Game
 		string randTemp = T[player.rndnum.Next(RoomLib.Count)];
 		T.Remove(randTemp);
 		return randTemp;
-	}
-
-	private string RandomEnemy()
-	{
-		List<string> T = new List<string>();
-		T = EnemyLib;
-		string randTempEnemy = T[player.rndnum.Next(EnemyLib.Count)];
-		return randTempEnemy;
 	}
 
 	// Print out the opening message for the player.
@@ -368,6 +343,7 @@ class Game
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 
+	// Supports crafting from player
 	private void CraftHelp(Command command)
 	{
 		string craftable = player.Craft(command);
@@ -388,6 +364,7 @@ class Game
 		}
 	}
 
+	// Randomises if a room has a enemy
 	private void RandEnemySpawn(Room rname,Enemy name)
 	{
 		if (player.rndnum.Next(1,3) == 1)
@@ -396,6 +373,7 @@ class Game
 		}
 	}
 
+	// Randomises if a item spawns in a room
 	private void RandItemSpawn(Room rname,Item name)
 	{
 		if (player.rndnum.Next(1,itemChance) == 1)
@@ -481,6 +459,8 @@ class Game
 		Devoured();
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
+
+	// Allows you to fight also resets spell usage
 	private void Fight()
 	{	
 		if (player.tel > 0)
@@ -503,7 +483,6 @@ class Game
 		if (player.CurrentRoom.enemy.GetEnemyCurrentHealth() > 0)
 		{
 			printincolor.Green($"You hit the enemy for {playerAttack} damage. It still has {player.CurrentRoom.enemy.GetEnemyCurrentHealth()}HP remaining\n");
-			Console.ForegroundColor = ConsoleColor.White;
 		}
 		else
 		{

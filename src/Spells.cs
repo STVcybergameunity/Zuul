@@ -1,4 +1,4 @@
-class Spell : Game
+class Spell
 {
     public string desc;
     public int spellDamage;

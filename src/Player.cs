@@ -94,6 +94,7 @@ class Player
         }
 	}
 
+    // Allows you to hurt yourself for a amount that you typ in
     public void damageNum(string hptotstr)
 	{
         if (hptotstr != null)
@@ -150,6 +151,7 @@ class Player
 		health = 0;
 	}
 
+    // Allows the enemy to attack you in game
     public int EnemyAttack(int num, int num1)
     {
 		int dodgenr = rndnum.Next(1,11);
@@ -165,6 +167,8 @@ class Player
 			return enemyAttack;
 		}
     }
+
+    // Allows the player to attack the enemy in game
     public int PlayerAttack(int num, int num1)
 	{	
 		int playerAttack = 0;
@@ -210,7 +214,7 @@ class Player
         return false;
     }
 
-    	// Allows you to add items to a room
+    // Allows you to add items to a room
 	public bool PutInChest(string itemName)
     {
         if (getBackpack() != null)
@@ -377,6 +381,7 @@ class Player
         }
     }
 
+    // Allows the usage of spells if you have the item bookofmeat
     public void Spells(Command command)
     {
         if(!command.HasSecondWord())
@@ -440,6 +445,8 @@ class Player
 			CurrentRoom.enemy = null;
 		}
     }
+
+    // Assists the spells
 
     public int SpellsHelp(Command command)
     {

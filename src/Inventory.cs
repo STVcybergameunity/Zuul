@@ -59,6 +59,7 @@ class Inventory
         return temp;
     }
 
+    // Lets you check what is inside items = the itemname
     public Item Peek(string itemName)
     {
         // Temp item creation
