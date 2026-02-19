@@ -4,10 +4,9 @@ using Microsoft.VisualBasic;
 
 class Game
 {
-	//gernerics learn pls
 	// Private fields
 	private Parser parser;
-	protected Player player;
+	private Player player;
 	private int rndEnemyCount;
 	private int itemChance = 1;
 	private PrintInColor printincolor = null;
@@ -178,12 +177,11 @@ class Game
 			// Checks if health is <= 0 then stops and makes color red
 			if (player.getHealth() <= 0)
 			{
-				printincolor.Red("Game Over\n");
+				printincolor.Red($"Game Over\n");
 				finished = true;
 			}
 		}
-		// End message and change color back to white if the game ended in a death
-		Console.ForegroundColor = ConsoleColor.White;
+		// End message
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
@@ -216,6 +214,7 @@ class Game
 		Console.WriteLine("Welcome to Zuul!");
 		Console.WriteLine("Zuul is a new, incredibly boring adventure game.");
 		Console.WriteLine("Type 'help' if you need help.");
+		printincolor.Red(player);
 		Console.WriteLine();
 	}
 
