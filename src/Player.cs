@@ -191,6 +191,10 @@ class Player
     public bool TakeFromChest(string itemName)
     {
 		Item testtemp = CurrentRoom.Chest.Peek(itemName);
+        if (testtemp == null)
+        {
+            printincolor.Red("That item is not in this room");
+        }
         if (testtemp.Weight > backpack.FreeWeight())
         {
             printincolor.Red($"The item is to heavy u need {testtemp.Weight - backpack.FreeWeight()} more space\n");

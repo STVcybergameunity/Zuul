@@ -167,6 +167,8 @@ class Game
 		PrintHelp();
 		Console.WriteLine($"\n", player.CurrentRoom.GetLongDescription());
 
+		ConsoleColor currentForeground = Console.BackgroundColor;
+
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
 		bool finished = false;
@@ -186,6 +188,7 @@ class Game
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
+		Console.ForegroundColor = currentForeground;
     }	
 
 	// Checks if you are in the specified room if so you die
