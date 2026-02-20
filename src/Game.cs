@@ -17,6 +17,7 @@ class Game
 	private List<string> ItemLib = new List<string>();
 	private List<string> EnemyLib = new List<string>();
 	private List<string> RoomLib = new List<string>();
+	// Check welke kleur basis is in terminal
 
     public Game()
 	{
@@ -214,7 +215,6 @@ class Game
 		Console.WriteLine("Welcome to Zuul!");
 		Console.WriteLine("Zuul is a new, incredibly boring adventure game.");
 		Console.WriteLine("Type 'help' if you need help.");
-		printincolor.Red(player);
 		Console.WriteLine();
 	}
 

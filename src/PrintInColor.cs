@@ -1,12 +1,11 @@
-
 class PrintInColor
 {
 	public void Standard<T>(T printed)
 	{
-		if(typeof(T).IsClass && typeof(T) == typeof(Player))
+		if(typeof(T).IsClass)
 		{
-			Player player = printed as Player;
-			player.checkWeight();
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine("Class can't be colored");
 		} 
 		else
 		{

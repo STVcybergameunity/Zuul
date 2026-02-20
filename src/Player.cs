@@ -141,7 +141,7 @@ class Player
 	{
 		Console.Write("Total used weight is: ");
 		Console.WriteLine(getBackpack().TotalWeight());
-		Console.Write("U have: ");
+		Console.Write("You have: ");
 		Console.WriteLine($"{getBackpack().FreeWeight()} weight left\n");
 	}
 
